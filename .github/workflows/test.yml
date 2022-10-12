@@ -293,6 +293,10 @@ jobs:
           name: consul-k8s_linux_amd64.zip
           path: control-plane
 
+      - run: sudo apt-get update
+      - run: sudo apt-get install -y qemu-user-static
+      - run: docker buildx create --use
+
       - name: Docker build
         working-directory: control-plane
         run: |
