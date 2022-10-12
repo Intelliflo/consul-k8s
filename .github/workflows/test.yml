@@ -272,57 +272,59 @@ jobs:
       directory: cli 
       go-version: ${{ needs.get-go-version.outputs.go-version }}
 
-# Disabling for now until we get faster VMs to run acceptance tests. Faster VMs for Github Actions are supposed
-# to be available in the summer of 2022. For now, run the dev-upload docker and acceptance tests in CircleCI
-#  dev-upload-docker:
-#    if: github.repository_owner == 'hashicorp' # Do not run on forks as this requires secrets
-#    needs: build-distros
-#    runs-on: ubuntu-latest
-#
-#    env: 
-#      GITHUB_PULL_REQUEST: ${{github.event.pull_request.number}}
-#      DOCKER_USER: ${{secrets.DOCKER_USER}}
-#      DOCKER_PASS: ${{secrets.DOCKER_PASS}}
-#    steps:
-#      - uses: actions/checkout@v2
-#
-#      - run: mkdir -p control-plane/pkg/bin/linux_amd64
-#
-#      - uses: actions/download-artifact@v3
-#        with:
-#          name: consul-k8s_linux_amd64.zip
-#          path: control-plane
-#
-#      - name: Docker build 
-#        working-directory: control-plane
-#        run: |
-#          unzip consul-k8s_linux_amd64.zip -d ./pkg/bin/linux_amd64
-#          make ci.dev-docker-github
-#
-#  acceptance-tproxy:
-#    needs: [get-go-version, unit-cli, dev-upload-docker, unit-acceptance-framework, unit-test-helm-templates]
-#    needs: dev-upload-docker
-#    uses: hashicorp/consul-k8s/.github/workflows/reusable-acceptance.yml@main
-#    with:
-#      name: acceptance-tproxy
-#      directory: acceptance/tests
-#      go-version: ${{ needs.get-go-version.outputs.go-version }}
-#      additional-flags: "-use-kind -kubecontext=kind-dc1 -secondary-kubecontext=kind-dc2 -enable-transparent-proxy"
-#      gotestsum-version: 1.6.4
-#    secrets:
-#      CONSUL_ENT_LICENSE: ${{ secrets.CONSUL_ENT_LICENSE }}
-#
-#  acceptance:
-#    #needs: [get-go-version, unit-cli, dev-upload-docker, unit-acceptance-framework, unit-test-helm-templates]
-#    needs: dev-upload-docker
-#    uses: hashicorp/consul-k8s/.github/workflows/reusable-acceptance.yml@main
-#    with:
-#      name: acceptance
-#      directory: acceptance/tests
-#      go-version: ${{ needs.get-go-version.outputs.go-version }}
-#      additional-flags: "-use-kind -kubecontext=kind-dc1 -secondary-kubecontext=kind-dc2"
-#      gotestsum-version: 1.6.4
-#    secrets:
-#      CONSUL_ENT_LICENSE: ${{ secrets.CONSUL_ENT_LICENSE }}
+ # Disabling for now until we get faster VMs to run acceptance tests. Faster VMs for Github Actions are supposed
+ # to be available in the summer of 2022. For now, run the dev-upload docker and acceptance tests in CircleCI
+  dev-upload-docker:
+    if: github.repository_owner == 'hashicorp' # Do not run on forks as this requires secrets
+    needs: build-distros
+    runs-on: [custom, linux, xl]
+
+    env:
+      GITHUB_PULL_REQUEST: ${{github.event.pull_request.number}}
+      DOCKER_USER: ${{secrets.DOCKER_USER}}
+      DOCKER_PASS: ${{secrets.DOCKER_PASS}}
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: mkdir -p control-plane/pkg/bin/linux_amd64
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: consul-k8s_linux_amd64.zip
+          path: control-plane
+
+      - name: Docker build
+        working-directory: control-plane
+        run: |
+          unzip consul-k8s_linux_amd64.zip -d ./pkg/bin/linux_amd64
+          make ci.dev-docker-github
+
+  acceptance-tproxy:
+    #needs: [get-go-version, unit-cli, dev-upload-docker, unit-acceptance-framework, unit-test-helm-templates]
+    needs: dev-upload-docker
+    runs-on: [custom, linux, xl]
+    uses: hashicorp/consul-k8s/.github/workflows/reusable-acceptance.yml@main
+    with:
+      name: acceptance-tproxy
+      directory: acceptance/tests
+      go-version: ${{ needs.get-go-version.outputs.go-version }}
+      additional-flags: "-use-kind -kubecontext=kind-dc1 -secondary-kubecontext=kind-dc2 -enable-transparent-proxy"
+      gotestsum-version: 1.6.4
+    secrets:
+      CONSUL_ENT_LICENSE: ${{ secrets.CONSUL_ENT_LICENSE }}
+
+  acceptance:
+    #needs: [get-go-version, unit-cli, dev-upload-docker, unit-acceptance-framework, unit-test-helm-templates]
+    needs: dev-upload-docker
+    runs-on: [custom, linux, xl]
+    uses: hashicorp/consul-k8s/.github/workflows/reusable-acceptance.yml@main
+    with:
+      name: acceptance
+      directory: acceptance/tests
+      go-version: ${{ needs.get-go-version.outputs.go-version }}
+      additional-flags: "-use-kind -kubecontext=kind-dc1 -secondary-kubecontext=kind-dc2"
+      gotestsum-version: 1.6.4
+    secrets:
+      CONSUL_ENT_LICENSE: ${{ secrets.CONSUL_ENT_LICENSE }}
 
 
