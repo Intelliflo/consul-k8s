@@ -277,7 +277,7 @@ jobs:
   dev-upload-docker:
     if: github.repository_owner == 'hashicorp' # Do not run on forks as this requires secrets
     needs: build-distros
-    runs-on: ubuntu-large
+    runs-on: ubuntu-latest
 
     env:
       GITHUB_PULL_REQUEST: ${{github.event.pull_request.number}}
