@@ -38,7 +38,7 @@ env:
 
 jobs:
   job:
-    runs-on: ubuntu-latest
+    runs-on: [custom, linux, xl]
     strategy: 
       matrix:
         include: # I am really sorry for this but I could not find a way to automatically split our tests into several runners. For now, split manually.

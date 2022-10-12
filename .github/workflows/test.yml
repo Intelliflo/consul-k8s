@@ -277,7 +277,7 @@ jobs:
   dev-upload-docker:
     if: github.repository_owner == 'hashicorp' # Do not run on forks as this requires secrets
     needs: build-distros
-    runs-on: [custom, linux, xl]
+    runs-on: ubuntu-large
 
     env:
       GITHUB_PULL_REQUEST: ${{github.event.pull_request.number}}
@@ -302,7 +302,6 @@ jobs:
   acceptance-tproxy:
     #needs: [get-go-version, unit-cli, dev-upload-docker, unit-acceptance-framework, unit-test-helm-templates]
     needs: dev-upload-docker
-    runs-on: [custom, linux, xl]
     uses: hashicorp/consul-k8s/.github/workflows/reusable-acceptance.yml@main
     with:
       name: acceptance-tproxy
@@ -316,7 +315,6 @@ jobs:
   acceptance:
     #needs: [get-go-version, unit-cli, dev-upload-docker, unit-acceptance-framework, unit-test-helm-templates]
     needs: dev-upload-docker
-    runs-on: [custom, linux, xl]
     uses: hashicorp/consul-k8s/.github/workflows/reusable-acceptance.yml@main
     with:
       name: acceptance
