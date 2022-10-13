@@ -349,7 +349,7 @@ jobs:
       name: acceptance-tproxy
       directory: acceptance/tests
       go-version: ${{ needs.get-go-version.outputs.go-version }}
-      additional-flags: "-use-kind -kubecontext=kind-dc1 -secondary-kubecontext=kind-dc2 -enable-transparent-proxy"
+      additional-flags: "-use-kind -kubecontext=kind-dc1 -secondary-kubecontext=kind-dc2 -enable-transparent-proxy -consul-image=hashicorppreview/consul-enterprise:1.14-dev"
       gotestsum-version: 1.6.4
     secrets:
       CONSUL_ENT_LICENSE: ${{ secrets.CONSUL_ENT_LICENSE }}
@@ -362,7 +362,7 @@ jobs:
       name: acceptance
       directory: acceptance/tests
       go-version: ${{ needs.get-go-version.outputs.go-version }}
-      additional-flags: "-use-kind -kubecontext=kind-dc1 -secondary-kubecontext=kind-dc2"
+      additional-flags: "-use-kind -kubecontext=kind-dc1 -secondary-kubecontext=kind-dc2 -consul-image=hashicorppreview/consul-enterprise:1.14-dev"
       gotestsum-version: 1.6.4
     secrets:
       CONSUL_ENT_LICENSE: ${{ secrets.CONSUL_ENT_LICENSE }}
