@@ -42,13 +42,17 @@ jobs:
     strategy: 
       matrix:
         include: # I am really sorry for this but I could not find a way to automatically split our tests into several runners. For now, split manually.
-          - {runner: "0", test-packages: "basic connect consul-dns"}
-          - {runner: "1", test-packages: "controller example ingress-gateway"}
-          - {runner: "2", test-packages: "metrics partitions peering"}
-          - {runner: "3", test-packages: "snapshot-agent sync terminating-gateway"}
-          - {runner: "4", test-packages: "vault wan-federation"}
+          - {runner: "0", test-packages: "basic connect"}
+          - {runner: "1", test-packages: "consul-dns"}
+          - {runner: "2", test-packages: "controller example"}
+          - {runner: "3", test-packages: "ingress-gateway"}
+          - {runner: "4", test-packages: "metrics"}
+          - {runner: "5", test-packages: "partitions"}
+          - {runner: "6", test-packages: "peering"}
+          - {runner: "7", test-packages: "snapshot-agent sync terminating-gateway"}
+          - {runner: "8", test-packages: "vault wan-federation"}
 
-      fail-fast: true
+      fail-fast: false
     steps:      
       - name: Checkout code
         uses: actions/checkout@v2
