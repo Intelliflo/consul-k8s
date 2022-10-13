@@ -341,10 +341,11 @@ jobs:
             hashicorppreview/${{ env.repo }}-control-plane:${{ env.version }}
             docker.io/hashicorppreview/${{ env.repo }}-control-plane:${{ env.version }}-${{ github.sha }}
 
+# TODO (agentless): re-enable once tproxy is supported
 #  acceptance-tproxy:
 #    #needs: [get-go-version, unit-cli, dev-upload-docker, unit-acceptance-framework, unit-test-helm-templates]
 #    needs: dev-upload-docker
-#    uses: ./consul-k8s/.github/workflows/reusable-acceptance.yml
+#    uses: ./.github/workflows/reusable-acceptance.yml
 #    with:
 #      name: acceptance-tproxy
 #      directory: acceptance/tests
@@ -355,20 +356,28 @@ jobs:
 #      CONSUL_ENT_LICENSE: ${{ secrets.CONSUL_ENT_LICENSE }}
 
   acceptance:
-    #needs: [get-go-version, unit-cli, dev-upload-docker, unit-acceptance-framework, unit-test-helm-templates]
     needs: dev-upload-docker
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3 # Necessary to access local action
-      - name: Local Action Call
-        uses: ./consul-k8s/.github/workflows/reusable-acceptance.yml
-        with:
-          name: acceptance
-          directory: acceptance/tests
-          go-version: ${{ needs.get-go-version.outputs.go-version }}
-          additional-flags: "-use-kind -kubecontext=kind-dc1 -secondary-kubecontext=kind-dc2 -consul-image=hashicorppreview/consul-enterprise:1.14-dev"
-          gotestsum-version: 1.6.4
-      secrets:
-        CONSUL_ENT_LICENSE: ${{ secrets.CONSUL_ENT_LICENSE }}
+    uses: ./.github/workflows/reusable-acceptance.yml
+    with:
+      name: acceptance
+      directory: acceptance/tests
+      go-version: ${{ needs.get-go-version.outputs.go-version }}
+      additional-flags: "-use-kind -kubecontext=kind-dc1 -secondary-kubecontext=kind-dc2 -consul-image=hashicorppreview/consul-enterprise:1.14-dev"
+      gotestsum-version: 1.6.4
+    secrets:
+      CONSUL_ENT_LICENSE: ${{ secrets.CONSUL_ENT_LICENSE }}
+
+# TODO (agentless): re-enable once tproxy is supported
+#  acceptance-cni:
+#    needs: dev-upload-docker
+#    uses: ./.github/workflows/reusable-acceptance.yml
+#    with:
+#      name: acceptance
+#      directory: acceptance/tests
+#      go-version: ${{ needs.get-go-version.outputs.go-version }}
+#      additional-flags: "-use-kind -kubecontext=kind-dc1 -secondary-kubecontext=kind-dc2 -enable-transparent-proxy -enable-cni -consul-image=hashicorppreview/consul-enterprise:1.14-dev"
+#      gotestsum-version: 1.6.4
+#    secrets:
+#      CONSUL_ENT_LICENSE: ${{ secrets.CONSUL_ENT_LICENSE }}
 
 
