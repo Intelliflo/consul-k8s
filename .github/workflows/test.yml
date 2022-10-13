@@ -72,7 +72,7 @@ jobs:
   unit-test-helm-templates:
     needs: 
       - unit-helm-gen
-    runs-on: ubuntu-latest
+    runs-on: custom-linux-small
     container: 
       image: docker.mirror.hashicorp.services/hashicorpdev/consul-helm-test:0.12.0
       options: --user 1001
@@ -82,7 +82,7 @@ jobs:
    
       - name: Run Unit Tests
         working-directory: charts/consul
-        run:  bats --jobs 4 ./test/unit
+        run:  bats --jobs 6 ./test/unit
 
   lint-control-plane:
     needs:
@@ -113,7 +113,7 @@ jobs:
 
   test-control-plane:
     needs: [get-go-version, lint-control-plane, golangci-lint-control-plane]
-    runs-on: ubuntu-latest
+    runs-on: custom-linux-small
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -160,7 +160,7 @@ jobs:
   test-enterprise-control-plane:
     if: github.repository_owner == 'hashicorp' # Do not run on forks as this requires secrets
     needs: [get-go-version, lint-control-plane, golangci-lint-control-plane]
-    runs-on: ubuntu-latest
+    runs-on: custom-linux-small
     env:
       CONSUL_LICENSE: ${{secrets.CONSUL_LICENSE}}
     steps:
