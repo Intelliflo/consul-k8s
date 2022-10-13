@@ -344,7 +344,7 @@ jobs:
   acceptance-tproxy:
     #needs: [get-go-version, unit-cli, dev-upload-docker, unit-acceptance-framework, unit-test-helm-templates]
     needs: dev-upload-docker
-    uses: hashicorp/consul-k8s/.github/workflows/reusable-acceptance.yml@main
+    uses: .github/workflows/reusable-acceptance.yml
     with:
       name: acceptance-tproxy
       directory: acceptance/tests
@@ -357,7 +357,7 @@ jobs:
   acceptance:
     #needs: [get-go-version, unit-cli, dev-upload-docker, unit-acceptance-framework, unit-test-helm-templates]
     needs: dev-upload-docker
-    uses: hashicorp/consul-k8s/.github/workflows/reusable-acceptance.yml@main
+    uses: .github/workflows/reusable-acceptance.yml
     with:
       name: acceptance
       directory: acceptance/tests
